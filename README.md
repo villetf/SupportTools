@@ -2,6 +2,8 @@
 
 SupportTools är en Powershellmodul som ger dig tillgång till ett flertal automatiserade verktyg för Region Kalmar Läns supportfunktioner.
 
+*Obs: På grund av sekretess har länkar och servernamn i detta projekt censurerats. De flesta länkar är därför döda.*
+
 ## Systembeskrivning
 
 SupportTools kräver Powershell 7 som kan installeras genom SysMan.
