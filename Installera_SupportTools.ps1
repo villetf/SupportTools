@@ -2,7 +2,7 @@
 if (!(Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
    Write-Host "SupportTools kräver Powershell 7, som inte är installerat. Installera det genom Sysman och kör detta skript igen. Går till Sysman..." -ForegroundColor Red
    Start-Sleep -Seconds 5
-   Start-Process "https://sysman.lkl.ltkalmar.se/SysMan/Application/InstallForClients#targetName=$env:computername"
+   Start-Process "https://sysman.ltkalmar.se/SysMan/Application/InstallForClients#targetName=$env:computername"
    exit
 }
 
@@ -20,7 +20,7 @@ if (Test-Path "$env:LocalAppData\SupportTools") {
 if ((Get-ExecutionPolicy) -eq "Restricted") {
    Write-Host "Din ExecutionPolicy tillåter inte skriptkörning. Ändra den som beskrivet under Vanliga problem i KA #1498. Går till KA..."
    Start-Sleep -Seconds 10
-   Start-Process "https://servicedesk.lkl.ltkalmar.se/ui/solutions?entity_id=1498&mode=detail#feedback"
+   Start-Process "https://servicedesk.ltkalmar.se/ui/solutions?entity_id=1498&mode=detail#feedback"
 }
 
 ## Skapar mapp för filerna
@@ -28,7 +28,7 @@ New-Item -ItemType Directory "$env:LocalAppData\SupportTools" | Out-Null
 
 ## Hämtar zip från webservern
 try {
-   Invoke-WebRequest -Uri "https://serverx.lkl.ltkalmar.se/supporttools/SupportTools.zip" -OutFile "$env:LocalAppData\SupportTools\SupportTools.zip"
+   Invoke-WebRequest -Uri "https://serverx.ltkalmar.se/supporttools/SupportTools.zip" -OutFile "$env:LocalAppData\SupportTools\SupportTools.zip"
 }
 catch {
    Write-Host "Installationsfilen kunde inte hämtas. Se nedan"

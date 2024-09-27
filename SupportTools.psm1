@@ -31,7 +31,7 @@ function Get-Options {
             do {
                Clear-Host
                $userToSearch = Read-Host "Ange användarnamnet du vill söka på"
-               if ((Invoke-RestMethod -Uri "https://sysman.lkl.ltkalmar.se/SysMan/api/v2/user/validateName?name=$userToSearch" -UseDefaultCredentials).isValid) {
+               if ((Invoke-RestMethod -Uri "https://sysman.ltkalmar.se/SysMan/api/v2/user/validateName?name=$userToSearch" -UseDefaultCredentials).isValid) {
                   Write-Host "Användaren $userToSearch finns inte i SysMan. Kontrollera stavning och försök igen" -ForegroundColor Red
                   Start-Sleep -Seconds 5
                   $userToSearch = ""
@@ -79,7 +79,7 @@ function Get-LockedAccounts {
       return
    }
 
-   if (Test-Connection "siem.lkl.ltkalmar.se" -Count 1 -TcpPort 443) {
+   if (Test-Connection "siem.ltkalmar.se" -Count 1 -TcpPort 443) {
       $lockoutInfo = Get-QradarLockoutInfo
       $qradarConnected = $true
    } else {
@@ -131,7 +131,7 @@ function Get-LoggedOnComputers {
    Write-Host "Söker efter datorer..."
    Send-Log -FunctionID 108 | Out-Null
    try {
-      $userInfo = Invoke-RestMethod -Uri "https://sysman.lkl.ltkalmar.se/SysMan/api/Reporting/User?userName=$User" -UseDefaultCredentials
+      $userInfo = Invoke-RestMethod -Uri "https://sysman.ltkalmar.se/SysMan/api/Reporting/User?userName=$User" -UseDefaultCredentials
    }
    catch {
       if (($_ | Test-Json -ErrorAction SilentlyContinue) -and ($_ | ConvertFrom-Json).code -eq "ResourceNotFound") {
@@ -245,7 +245,7 @@ function Get-ModuleVersion {
    Clear-Host
    $moduleVersion = [string](Get-Module SupportTools).Version
    try {
-      $newestVersion = Invoke-RestMethod -Uri "https://serverx.lkl.ltkalmar.se/supporttools/stversion.txt" -Method Get
+      $newestVersion = Invoke-RestMethod -Uri "https://serverx.ltkalmar.se/supporttools/stversion.txt" -Method Get
    }
    catch {
       Write-Warning "Kontroll efter nya uppdateringar misslyckades"
@@ -271,7 +271,7 @@ function Get-LocalInformation {
    )
 
    try {
-      $localInformation = Invoke-RestMethod -Uri "https://sysman.lkl.ltkalmar.se/SysMan/api/v2/client/$($currentComputer.name)/localInformation" -UseDefaultCredentials -ConnectionTimeoutSeconds 30
+      $localInformation = Invoke-RestMethod -Uri "https://sysman.ltkalmar.se/SysMan/api/v2/client/$($currentComputer.name)/localInformation" -UseDefaultCredentials -ConnectionTimeoutSeconds 30
    }
    catch {
       $tempVar.reallyLoggedOn = $true
@@ -324,10 +324,10 @@ function Get-SDPAsset {
 "@
    $data = @{ 'input_data' = $input_data }
    ## Gör anrop för att hämta Asset-ID
-   $assetId = (Invoke-RestMethod -Uri "https://servicedesk.lkl.ltkalmar.se/api/v3/assets" -Method Get -Body $data -Headers $technician_Key -ContentType "application/x-www-form-urlencoded").assets.id
+   $assetId = (Invoke-RestMethod -Uri "https://servicedesk.ltkalmar.se/api/v3/assets" -Method Get -Body $data -Headers $technician_Key -ContentType "application/x-www-form-urlencoded").assets.id
 
    ## Gör anrop för att hämta info om asset baserat på ID
-   $response = Invoke-RestMethod -Uri "https://servicedesk.lkl.ltkalmar.se/api/v3/assets/$assetId" -Method get -Headers $technician_Key
+   $response = Invoke-RestMethod -Uri "https://servicedesk.ltkalmar.se/api/v3/assets/$assetId" -Method get -Headers $technician_Key
 
    $response.asset | Add-Member -MemberType NoteProperty -Name "Rum" -Value $response.asset.ci_citype_4501_fields.udf_sline_7809 -ErrorAction SilentlyContinue
    $response.asset | Add-Member -MemberType NoteProperty -Name "Plan" -Value $response.asset.ci_citype_4501_fields.udf_pick_14401 -ErrorAction SilentlyContinue
@@ -355,13 +355,13 @@ function Get-QradarLockoutInfo {
 
    $global:cred = Get-QradarAuthentication
    $aqlQuery = "select%20categoryname(category)%20as%20'Low%20Level%20Category'%2C%22startTime%22%20as%20'Start%20Time'%2C%22deviceTime%22%20as%20'Log%20Source%20Time'%2C%22endTime%22%20as%20'Storage%20Time'%2C%22userName%22%20as%20'Username'%2C%22Machine%20Identifier%22%20as%20'Machine%20Identifier%20(custom)'%20from%20events%20where%20(%20%22Event%20ID%22%3D'4740'%20AND%20(%20%22deviceGroupList%22%3D'100077'%20AND%20ALL%20%22deviceGroupList%22%20!%3D%20'100076'%20)%20)%20order%20by%20%22startTime%22%20desc%20LIMIT%201000%20last%20120%20minutes"
-   $id = (Invoke-RestMethod -Uri "https://siem.lkl.ltkalmar.se/api/ariel/searches?query_expression=$aqlQuery" -Method Post -Headers @{
+   $id = (Invoke-RestMethod -Uri "https://siem.ltkalmar.se/api/ariel/searches?query_expression=$aqlQuery" -Method Post -Headers @{
       'Version'       = '20.0'
       'Accept'        = 'application/json'
    } -Authentication Basic -Credential $cred).search_id
 
    do {
-      $queryStatus = (Invoke-RestMethod -Uri "https://siem.lkl.ltkalmar.se/api/ariel/searches/$id" -Method GET -Headers @{
+      $queryStatus = (Invoke-RestMethod -Uri "https://siem.ltkalmar.se/api/ariel/searches/$id" -Method GET -Headers @{
          'Version'       = '20.0'
          'Accept'        = 'application/json'
       } -Authentication Basic -Credential $cred).status
@@ -369,7 +369,7 @@ function Get-QradarLockoutInfo {
       $queryStatus -eq "COMPLETED"
    )
 
-   $lockEvents = (Invoke-RestMethod -Uri "https://siem.lkl.ltkalmar.se/api/ariel/searches/$id/results" -Method GET -Headers @{
+   $lockEvents = (Invoke-RestMethod -Uri "https://siem.ltkalmar.se/api/ariel/searches/$id/results" -Method GET -Headers @{
       'Range'         = 'items=0-49'
       'Version'       = '20.0'
       'Accept'        = 'application/json'
@@ -390,7 +390,7 @@ function Get-QradarAuthentication {
 
    do {
       try {
-         Invoke-RestMethod -Uri "https://siem.lkl.ltkalmar.se/api/ariel/saved_searches/3339" -Method GET -Headers @{
+         Invoke-RestMethod -Uri "https://siem.ltkalmar.se/api/ariel/saved_searches/3339" -Method GET -Headers @{
             'Version'       = '20.0'
             'Accept'        = 'application/json'
          } -Authentication Basic -Credential $cred -ErrorAction Stop | Out-Null
@@ -453,7 +453,7 @@ function Send-Log {
    }
    
    try {
-      Invoke-RestMethod -Uri "https://serverx.lkl.ltkalmar.se/api/supporttools/log" -Method Post -ContentType "application/json" -Body ($data | ConvertTo-Json)   
+      Invoke-RestMethod -Uri "https://serverx.ltkalmar.se/api/supporttools/log" -Method Post -ContentType "application/json" -Body ($data | ConvertTo-Json)   
    }
    catch {
       return
@@ -464,7 +464,7 @@ function Send-Log {
 function Find-Updates { 
    $moduleVersion = [string](Get-Module SupportTools).Version
    try {
-      $newestVersion = Invoke-RestMethod -Uri "https://serverx.lkl.ltkalmar.se/supporttools/stversion.txt" -Method Get
+      $newestVersion = Invoke-RestMethod -Uri "https://serverx.ltkalmar.se/supporttools/stversion.txt" -Method Get
    }
    catch {
       Write-Warning "Kontroll efter nya uppdateringar misslyckades"
@@ -489,7 +489,7 @@ function Find-Updates {
 function Update-SupportTools {
    Remove-Item -Path "$env:LocalAppData\SupportTools\*"
    try {
-      Invoke-WebRequest -Uri "https://serverx.lkl.ltkalmar.se/supporttools/SupportTools.zip" -OutFile "$env:LocalAppData\SupportTools\SupportTools.zip"
+      Invoke-WebRequest -Uri "https://serverx.ltkalmar.se/supporttools/SupportTools.zip" -OutFile "$env:LocalAppData\SupportTools\SupportTools.zip"
    }
    catch {
       throw "Hämtning av ny version misslyckades: $_"

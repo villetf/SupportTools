@@ -12,7 +12,7 @@ Varje gång man kör modulen kontrollerar den det installerade versionsnumret mo
 
 ## Installation
 
-Installationsinstruktioner finns [här.](https://servicedesk.lkl.ltkalmar.se/ui/solutions?entity_id=1498&mode=detail#feedback)
+Installationsinstruktioner finns [här.](https://servicedesk.ltkalmar.se/ui/solutions?entity_id=1498&mode=detail#feedback)
 
 ## Användning
 
@@ -32,4 +32,4 @@ Denna funktion visar den nuvarande SupportTools-versionen och kollar samtidigt e
 
 ## Support
 
-För buggrapporter och förbättringsförslag kan man antingen lägga ett ärende till Operations Center i ServiceDesk Plus, eller [öppna ett issue i Gitlab.](https://gitlab.lkl.ltkalmar.se/oc/supporttools/-/issues "Issue"). Om GitLab används ska issuet märkas med någon av labelarna "Bugg" eller "Förbättringsförslag".
+För buggrapporter och förbättringsförslag kan man antingen lägga ett ärende till Operations Center i ServiceDesk Plus, eller [öppna ett issue i Gitlab.](https://gitlab.ltkalmar.se/oc/supporttools/-/issues "Issue"). Om GitLab används ska issuet märkas med någon av labelarna "Bugg" eller "Förbättringsförslag".
